@@ -4,8 +4,7 @@ MAX_ITERATIONS = 3
 PRECISION = 1e-2
 
 '''
-    Description: finds the local minumum within the
-                initial interval
+    Description: finds a local minumum given an initial interval
     			 
     Input params:       f => function that
                                     will be minimize
@@ -61,8 +60,7 @@ def fibonacci_sequence(desired_value):
     return fibonacci_numbers
 
 '''
-    Description: finds the local minumum within the
-                initial interval
+    Description: finds a local minumum given an initial interval
     			 
     Input params:       f => function that
                                     will be minimize
@@ -96,8 +94,7 @@ def fibonacci_search(f, search_interval):
     return solution
 
 '''
-    Description: finds the local minumum within the
-                initial interval
+    Description: finds a local minumum given an initial value
     			 
     Input params:       f_prime => first derivative
                             of the function to be minimized
@@ -119,8 +116,7 @@ def newton_search(f_prime, f_second, search_point):
 
 
 '''
-    Description: finds the local minumum within the
-                initial interval
+    Description: finds a local minumum given 3 initial points
     			 
     Input params:       f => function to be minimized
                         f_prime => first derivative
