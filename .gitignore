@@ -1,0 +1,7 @@
+# LaTeX file extesions
+*.pdf
+*.gz
+*.aux
+*.log
+*.out
+*.toc

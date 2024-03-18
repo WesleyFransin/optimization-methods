@@ -4,36 +4,36 @@ MAX_ITERATIONS = 3
 PRECISION = 1e-2
 
 '''
-    Description: finds a local minumum given an initial interval
+    Description: finds a local minimum given an initial interval
     			 
     Input params:       f => function that
                                     will be minimize
                         search_interval => interval where the
                                     minimum will be searched in
-                        uncertanty_distance => mean point displacement
+                        uncertainty_distance => mean point displacement
                         
     Output params:      local minimum value                       
 '''
-def bissection_search(f, search_interval, uncertanty_distance):
-    if(uncertanty_distance > PRECISION):
+def bisection_search(f, search_interval, uncertainty_distance):
+    if(uncertainty_distance > PRECISION):
         raise ValueError('O intervalo de incerteza precisa ser menor que a precisão')
     i = 0
     solution = None
     
     while(i < MAX_ITERATIONS and abs(search_interval[1] - search_interval[0]) >= PRECISION):
         mean_point = (search_interval[0] + search_interval[1])/2
-        uncertanty_left = mean_point - uncertanty_distance
-        uncertanty_right = mean_point + uncertanty_distance
+        uncertainty_left = mean_point - uncertainty_distance
+        uncertainty_right = mean_point + uncertainty_distance
 
-        f_uncertanty_left = f(uncertanty_left)
-        f_uncertanty_right = f(uncertanty_right)
+        f_uncertainty_left = f(uncertainty_left)
+        f_uncertainty_right = f(uncertainty_right)
         
-        if(f_uncertanty_left == f_uncertanty_right):
-            search_interval = [uncertanty_left, uncertanty_right]
-        elif(f_uncertanty_left < f_uncertanty_right):
-            search_interval = [search_interval[0], uncertanty_right]
+        if(f_uncertainty_left == f_uncertainty_right):
+            search_interval = [uncertainty_left, uncertainty_right]
+        elif(f_uncertainty_left < f_uncertainty_right):
+            search_interval = [search_interval[0], uncertainty_right]
         else:
-            search_interval = [uncertanty_left, search_interval[1]]
+            search_interval = [uncertainty_left, search_interval[1]]
         i += 1
 
     solution = (search_interval[0] + search_interval[1])/2
@@ -60,13 +60,13 @@ def fibonacci_sequence(desired_value):
     return fibonacci_numbers
 
 '''
-    Description: finds a local minumum given an initial interval
+    Description: finds a local minimum given an initial interval
     			 
     Input params:       f => function that
                                     will be minimize
                         search_interval => interval where the
                                     minimum will be searched in
-                        uncertanty_distance => mean point displacement
+                        uncertainty_distance => mean point displacement
                         
     Output params:      local minimum value                       
 '''
@@ -94,7 +94,7 @@ def fibonacci_search(f, search_interval):
     return solution
 
 '''
-    Description: finds a local minumum given an initial value
+    Description: finds a local minimum given an initial value
     			 
     Input params:       f_prime => first derivative
                             of the function to be minimized
@@ -116,7 +116,7 @@ def newton_search(f_prime, f_second, search_point):
 
 
 '''
-    Description: finds a local minumum given 3 initial points
+    Description: finds a local minimum given 3 initial points
     			 
     Input params:       f => function to be minimized
                         f_prime => first derivative
@@ -174,7 +174,7 @@ def f_quad_prime(x):
     y = 4*(x-2)**3
     return y
 
-solution = bissection_search(f, [-3, 5], 1e-3)
+solution = bisection_search(f, [-3, 5], 1e-3)
 print(f'Dicotômica: {solution}')
 solution = fibonacci_search(f, [-3, 5])
 print(f'Fibonacci: {solution}')
