@@ -1,5 +1,3 @@
-import numpy as np
-
 MAX_ITERATIONS = 3
 PRECISION = 1e-2
 
