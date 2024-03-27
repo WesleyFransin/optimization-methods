@@ -1,5 +1,5 @@
-MAX_ITERATIONS = 3
-PRECISION = 1e-2
+# MAX_ITERATIONS = 3
+# PRECISION = 1e-2
 
 '''
     Description: finds a local minimum given an initial interval
@@ -12,13 +12,13 @@ PRECISION = 1e-2
                         
     Output params:      local minimum value                       
 '''
-def bisection_search(f, search_interval, uncertainty_distance):
-    if(uncertainty_distance > PRECISION):
+def bisection_search(f, search_interval, uncertainty_distance=1e-7, linear_precision=1e-6, linear_max_iterations=1000, **kwargs):
+    if(uncertainty_distance > linear_precision):
         raise ValueError('O intervalo de incerteza precisa ser menor que a precisão')
     i = 0
     solution = None
     
-    while(i < MAX_ITERATIONS and abs(search_interval[1] - search_interval[0]) >= PRECISION):
+    while(i < linear_max_iterations and abs(search_interval[1] - search_interval[0]) >= linear_precision):
         mean_point = (search_interval[0] + search_interval[1])/2
         uncertainty_left = mean_point - uncertainty_distance
         uncertainty_right = mean_point + uncertainty_distance
@@ -172,11 +172,11 @@ def f_quad_prime(x):
     y = 4*(x-2)**3
     return y
 
-solution = bisection_search(f, [-3, 5], 1e-3)
-print(f'Dicotômica: {solution}')
-solution = fibonacci_search(f, [-3, 5])
-print(f'Fibonacci: {solution}')
-solution = newton_search(f_prime, f_second, 1)
-print(f'Newton: {solution}')
-solution = quadratic_fit(f_quad, f_quad_prime, [-3, 1, 5])
-print(f'Ajuste Quadrático: {solution}')
+# solution = bisection_search(f, [-3, 5], 1e-3)
+# print(f'Dicotômica: {solution}')
+# solution = fibonacci_search(f, [-3, 5])
+# print(f'Fibonacci: {solution}')
+# solution = newton_search(f_prime, f_second, 1)
+# print(f'Newton: {solution}')
+# solution = quadratic_fit(f_quad, f_quad_prime, [-3, 1, 5])
+# print(f'Ajuste Quadrático: {solution}')

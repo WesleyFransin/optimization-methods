@@ -5,3 +5,6 @@
 *.log
 *.out
 *.toc
+
+# Folders
+/__pycache__
