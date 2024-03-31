@@ -44,6 +44,7 @@ def multidimensional_search(f, gradient_f, x_0, calculate_D_matrix, find_alpha, 
     stop_criteria = False
     
     x_i = np.array(x_0)
+    x_i = x_i[:, None]
     x_last = None
     g_last = None
     D_last = None 
@@ -55,7 +56,7 @@ def multidimensional_search(f, gradient_f, x_0, calculate_D_matrix, find_alpha, 
         D_i = calculate_D_matrix(g_i, x=x_i, x_last=x_last, g_last=g_last, D_last = D_last, **kwargs)
         d_i = np.linalg.solve(D_i, -g_i)
         d_i = d_i/np.linalg.norm(d_i)
-        int_prod_gd = np.inner(g_i.T, d_i)
+        int_prod_gd = g_i.T.dot(d_i)
 
         if(int_prod_gd >= 0):
             d_i = -g_i
@@ -87,8 +88,6 @@ def d_quasi_newton(g, g_last, x, x_last, D_last, **kwargs):
 
     s = x - x_last
     y = g - g_last
-    s = s[:, None]
-    y = y[:, None]
 
     if(s.T.dot(y) < 0):
         return np.identity(len(g))
@@ -97,31 +96,90 @@ def d_quasi_newton(g, g_last, x, x_last, D_last, **kwargs):
     return np.linalg.inv(D)
 
 def f_1(x):
-    y = 10*(x[1] - x[0]**2)**2 + (1-x[0])**2
+    y = 10*(x[1][0] - x[0][0]**2)**2 + (1-x[0][0])**2
     return y
 
 def g_f1(x):
     g = np.array([
-        -40*(x[0]*x[1] - x[0]**3) - 2*(1-x[0]),
-        20*(x[1] - x[0]**2)
+        -40*(x[0][0]*x[1][0] - x[0][0]**3) - 2*(1-x[0][0]),
+        20*(x[1][0] - x[0][0]**2)
     ])
-    return g
+    return g[:, None]
 
 def h_f1(x):
-    x_1 = x[0]    
-    x_2 = x[1]
+    x_1 = x[0][0]    
+    x_2 = x[1][0]
     h = np.matrix([
         [-40*x_2 + 120*x_1**2 + 2, -40*x_1],
         [-40*x_1, 20]
     ]) 
     return h 
 
+def f_2(x):
+    y = 200*(x[1][0] - x[0][0]**2)**2 + (1-x[0][0])**2
+    return y
+
+def g_f2(x):
+    g = np.array([
+        -800*(x[0][0]*x[1][0] - x[0][0]**3) - 2*(1-x[0][0]),
+        400*(x[1][0] - x[0][0]**2)
+    ])
+    return g[:, None]
+
+def h_f2(x):
+    x_1 = x[0][0]    
+    x_2 = x[1][0]
+    h = np.matrix([
+        [-800*x_2 + 2400*x_1**2 + 2, -800*x_1],
+        [-800*x_1, 400]
+    ]) 
+    return h 
+
+A3 = np.array([[0.78, -.02, -.12, -.14],
+                [-.02, .86, -.04, .06],
+                [-.12, -.04, .72, -.08],
+                [-.14, .06, -.08, .74]])
+b3 = np.array([.76, .08, 1.12, 0.68])
+b3 = b3[:, None]
+
+def f_3(x):
+    y = (1/2)* x.T.dot(A3).dot(x) - b3.T.dot(x)
+    return y
+
+def g_f3(x):
+    g = A3.dot(x) - b3.T
+    return g
+
+def h_f3(x):
+    return A3
+
+A4 = np.array([ [1,1,1,1],
+                [1, 3, 3, 3],
+                [1, 3, 5, 5],
+                [1, 3, 5, 7]])
+b4 = np.array([10, 28, 42, 50])
+b4 = b4[:, None]
+
+def f_4(x):
+    y = (1/2)* x.T.dot(A4).dot(x) - b4.T.dot(x)
+    return y
+
+def g_f4(x):
+    g = A4.dot(x) - b4.T
+    return g
+
+def h_f4(x):
+    return A4
 
 scipy_search = lambda f, **kwargs : scipy.optimize.minimize_scalar(f).x
 search_function = bisection_search # bisection_search, scipy_search
 direction_method = d_gradient_method # d_gradient_method, d_newton_method, d_quasi_newton
+x_0 = [-1.2, 1] # [-1.2, 1], [0, 0, 0, 0]
 
-result = multidimensional_search(f_1, g_f1, [-1.2, 1],
+# print(f_4(np.array(x_0)))
+# print(g_f4(np.array(x_0)))
+# print(h_f4(np.array(x_0)))
+result = multidimensional_search(f_1, g_f1, x_0,
                                 direction_method, search_function,
                                 precision=1e-6, max_iterations=1000,
                                 linear_precision=1e-7, linear_max_iterations=1000,
