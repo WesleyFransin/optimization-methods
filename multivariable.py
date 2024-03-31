@@ -2,9 +2,6 @@ import numpy as np
 
 import scipy
 
-MAX_ITERATIONS = 1000
-MAX_I_1D = 1000
-
 def is_positive(x):
     return np.all(np.linalg.eigvals(x) > 0)
 
@@ -42,7 +39,7 @@ def bisection_search(f, search_interval, uncertainty_distance=1e-7, linear_preci
     solution = (search_interval[0] + search_interval[1])/2
     return solution
 
-def multivariable_search(f, gradient_f, x_0, calculate_D_matrix, find_alpha, precision, **kwargs):
+def multidimensional_search(f, gradient_f, x_0, calculate_D_matrix, find_alpha, precision, max_iterations, **kwargs):
     i = 0
     stop_criteria = False
     
@@ -51,7 +48,7 @@ def multivariable_search(f, gradient_f, x_0, calculate_D_matrix, find_alpha, pre
     g_last = None
     D_last = None 
 
-    while(i < MAX_ITERATIONS and not stop_criteria):
+    while(i < max_iterations and not stop_criteria):
         f_i = f(x_i)
         g_i = gradient_f(x_i)
 
@@ -122,9 +119,9 @@ def h_f1(x):
 
 scipy_search = lambda f, **kwargs : scipy.optimize.minimize_scalar(f).x
 search_function = bisection_search # bisection_search, scipy_search
-direction_method = d_quasi_newton # d_gradient_method, d_newton_method, d_quasi_newton
+direction_method = d_gradient_method # d_gradient_method, d_newton_method, d_quasi_newton
 
-result = multivariable_search(f_1, g_f1, [-1.2, 1],
+result = multidimensional_search(f_1, g_f1, [-1.2, 1],
                                 direction_method, search_function,
                                 precision=1e-6, max_iterations=1000,
                                 linear_precision=1e-7, linear_max_iterations=1000,
