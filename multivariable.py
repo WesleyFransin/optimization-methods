@@ -1,5 +1,4 @@
 import numpy as np
-from one_variable import bisection_search 
 
 import scipy
 
@@ -17,6 +16,31 @@ def is_negative(x):
 
 def is_semi_negative(x):
     return np.all(np.linalg.eigvals(x) <= 0)
+
+def bisection_search(f, search_interval, uncertainty_distance=1e-7, linear_precision=1e-6, linear_max_iterations=1000, **kwargs):
+    if(uncertainty_distance > linear_precision):
+        raise ValueError('O intervalo de incerteza precisa ser menor que a precisão')
+    i = 0
+    solution = None
+    
+    while(i < linear_max_iterations and abs(search_interval[1] - search_interval[0]) >= linear_precision):
+        mean_point = (search_interval[0] + search_interval[1])/2
+        uncertainty_left = mean_point - uncertainty_distance
+        uncertainty_right = mean_point + uncertainty_distance
+
+        f_uncertainty_left = f(uncertainty_left)
+        f_uncertainty_right = f(uncertainty_right)
+        
+        if(f_uncertainty_left == f_uncertainty_right):
+            search_interval = [uncertainty_left, uncertainty_right]
+        elif(f_uncertainty_left < f_uncertainty_right):
+            search_interval = [search_interval[0], uncertainty_right]
+        else:
+            search_interval = [uncertainty_left, search_interval[1]]
+        i += 1
+
+    solution = (search_interval[0] + search_interval[1])/2
+    return solution
 
 def multivariable_search(f, gradient_f, x_0, calculate_D_matrix, find_alpha, precision, **kwargs):
     i = 0
