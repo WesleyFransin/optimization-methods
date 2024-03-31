@@ -144,10 +144,10 @@ b3 = b3[:, None]
 
 def f_3(x):
     y = (1/2)* x.T.dot(A3).dot(x) - b3.T.dot(x)
-    return y
+    return y[0]
 
 def g_f3(x):
-    g = A3.dot(x) - b3.T
+    g = A3.dot(x) - b3
     return g
 
 def h_f3(x):
@@ -162,10 +162,10 @@ b4 = b4[:, None]
 
 def f_4(x):
     y = (1/2)* x.T.dot(A4).dot(x) - b4.T.dot(x)
-    return y
+    return y[0]
 
 def g_f4(x):
-    g = A4.dot(x) - b4.T
+    g = A4.dot(x) - b4
     return g
 
 def h_f4(x):
@@ -173,17 +173,14 @@ def h_f4(x):
 
 scipy_search = lambda f, **kwargs : scipy.optimize.minimize_scalar(f).x
 search_function = bisection_search # bisection_search, scipy_search
-direction_method = d_gradient_method # d_gradient_method, d_newton_method, d_quasi_newton
-x_0 = [-1.2, 1] # [-1.2, 1], [0, 0, 0, 0]
+direction_method = d_quasi_newton # d_gradient_method, d_newton_method, d_quasi_newton
+x_0 = [0, 0, 0, 0] # [-1.2, 1], [0, 0, 0, 0]
 
-# print(f_4(np.array(x_0)))
-# print(g_f4(np.array(x_0)))
-# print(h_f4(np.array(x_0)))
-result = multidimensional_search(f_1, g_f1, x_0,
+result = multidimensional_search(f_4, g_f4, x_0,
                                 direction_method, search_function,
-                                precision=1e-6, max_iterations=1000,
+                                precision=1e-6, max_iterations=10000,
                                 linear_precision=1e-7, linear_max_iterations=1000,
                                 search_interval=[0, 2], uncertainty_distance=1e-8,
-                                hessian=h_f1
+                                hessian=h_f4
                                 )
 print(result)
