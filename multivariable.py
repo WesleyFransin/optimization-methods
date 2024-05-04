@@ -39,6 +39,38 @@ def bisection_search(f, search_interval, uncertainty_distance=1e-7, linear_preci
     solution = (search_interval[0] + search_interval[1])/2
     return solution
 
+def secant_method(g, d, x_i, gradient_f, linear_max_iterations, **kwargs):
+    g0 = g.T.dot(d)
+    α0 = 0
+    x0 = x_i
+    g_in = g0
+    β = 0.1
+
+    α1 = 1
+    while(True):
+        x1 = x0 + α1*d
+        g1 = gradient_f(x1).T.dot(d)
+        if(g1*g0 < 0):
+            break
+        α1 = 2*α1  
+
+    i = 0
+    while(i < linear_max_iterations):
+        i += 1
+        α2 = α0 - g0*(α1 - α0)/(g1 - g0)
+        x2 = x0 + α2*d
+        g2 = gradient_f(x2).T.dot(d)
+        if(abs(g2) < β*g_in):
+            return α2
+        if(g0*g2 < 0):
+            α1 = α2
+            g1 = g2
+        else:
+            α0 = α2
+            g0 = g2
+    
+    return α2
+
 def multidimensional_search(f, gradient_f, x_0, calculate_D_matrix, find_alpha, precision, max_iterations, **kwargs):
     i = 0
     stop_criteria = False
@@ -47,7 +79,7 @@ def multidimensional_search(f, gradient_f, x_0, calculate_D_matrix, find_alpha, 
     x_i = x_i[:, None]
     x_last = None
     g_last = None
-    D_last = None 
+    D_last = None
 
     while(i < max_iterations and not stop_criteria):
         f_i = f(x_i)
@@ -63,7 +95,8 @@ def multidimensional_search(f, gradient_f, x_0, calculate_D_matrix, find_alpha, 
         
         f_alpha = lambda alpha: f(x_i + alpha*d_i)
 
-        α = find_alpha(f_alpha, **kwargs)
+        # α = find_alpha(f_alpha, **kwargs)
+        α = secant_method(g_i, d_i, x_i, gradient_f, **kwargs)
 
         D_last = D_i
         g_last = g_i
@@ -74,6 +107,7 @@ def multidimensional_search(f, gradient_f, x_0, calculate_D_matrix, find_alpha, 
         if(stop_criteria):
             break
         i += 1
+    print(i)
     return x_i
 
 def d_gradient_method(g, **kwargs):
