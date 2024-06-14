@@ -9,7 +9,7 @@ def pivot_system(A, b, c, s, r):
 
     return A_new, b_new, c_new
 
-def simplex(c, A, b):
+def simplex(c, A, b, find_base=False):
     MAX_ITERATIONS = 10
     A = np.array(A)
     b = np.array(b)
@@ -17,7 +17,8 @@ def simplex(c, A, b):
     x = np.zeros(A.shape[1])
 
     # TODO: escolher variáveis básicas iniciais
-    base_variables_I = np.array([2, 3, 4])
+    # base_variables_I = np.array([2, 3, 4])
+    base_variables_I = np.array([1, 3, 4])
     non_base_variables_J = get_non_basic_variables(x, base_variables_I)
     i = 0
     while i < MAX_ITERATIONS:
@@ -37,10 +38,14 @@ def simplex(c, A, b):
         A_j_hat =  np.matmul(A_i_inv, A_j)
         A_hat = np.matmul(A_i_inv, A)
 
-        if(not np.any(c_j_hat > 0)):
+        if( (not find_base and not np.any(c_j_hat > 0))
+            or (find_base and not np.any(c_j_hat < 0))):
             break
 
-        new_basic_variable_index, = np.where(c_j_hat == c_j_hat.max())
+        if(find_base):
+            new_basic_variable_index, = np.where(c_j_hat == c_j_hat.min())
+        else:
+            new_basic_variable_index, = np.where(c_j_hat == c_j_hat.max())
         new_basic_variable_index = new_basic_variable_index[0]
         new_basic_variable_index = non_base_variables_J[new_basic_variable_index]
 
@@ -51,6 +56,8 @@ def simplex(c, A, b):
         r_min = 0
         min_Asr = np.inf
         for r in range(len(A_s)):
+            if(A_s[r] == 0):
+                continue
             value = b_hat[r]/A_s[r]
             if(value < min_Asr and value >= 0):
                 min_Asr = value
@@ -98,5 +105,9 @@ b = [ # Valores das restrições
 
 
 result = simplex(c, A, b)
+
+print(f'z = {np.matmul(c, result)} / x = {result}')
+
+result = simplex(c, A, b, find_base=True)
 
 print(f'z = {np.matmul(c, result)} / x = {result}')
