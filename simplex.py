@@ -5,12 +5,15 @@ def get_non_basic_variables(x, I):
     mask[I] = False
     return np.arange(len(x))[mask]
 
-def simplex(A, b, c, find_base=False):
+def simplex(A, b, c, find_base=False, minimize=False):
     MAX_ITERATIONS = 10
     A = np.array(A)
     b = np.array(b)
     c = np.array(c)
     base_variables_I = np.array([])
+
+    if(find_base):
+        minimize = True
 
     # Encontrar solução básica factível de partida
     if(find_base):
@@ -40,11 +43,11 @@ def simplex(A, b, c, find_base=False):
         b_hat = np.matmul(A_i_inv, b)
         A_hat = np.matmul(A_i_inv, A)
 
-        if( (not find_base and not np.any(c_j_hat > 0))
-            or (find_base and not np.any(c_j_hat < 0))):
+        if( (not minimize and not np.any(c_j_hat > 0))
+            or (minimize and not np.any(c_j_hat < 0))):
             break
 
-        if(find_base):
+        if(minimize):
             new_basic_variable_index, = np.where(c_j_hat == c_j_hat.min())
         else:
             new_basic_variable_index, = np.where(c_j_hat == c_j_hat.max())
