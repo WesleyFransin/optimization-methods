@@ -5,8 +5,8 @@ def get_non_basic_variables(x, I):
     mask[I] = False
     return np.arange(len(x))[mask]
 
-def simplex(A, b, c, find_base=False, minimize=False):
-    MAX_ITERATIONS = 10
+def simplex(A, b, c, minimize=False, find_base=False):
+    MAX_ITERATIONS = 1000
     A = np.array(A)
     b = np.array(b)
     c = np.array(c)
